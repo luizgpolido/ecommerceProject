@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -32,4 +33,8 @@ public class Order {
     @Setter(AccessLevel.NONE)
     @OneToMany(mappedBy = "id.order")
     private Set<OrderItem> items = new HashSet<>();
+
+    public List<Product> getProducts(){
+        return items.stream().map(OrderItem::getProduct).toList();
+    }
 }
