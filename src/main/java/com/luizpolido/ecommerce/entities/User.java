@@ -1,9 +1,7 @@
 package com.luizpolido.ecommerce.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -26,6 +24,7 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "client")
+    @Setter(AccessLevel.NONE)
     private List<Order> orders = new ArrayList<>();
 
 
