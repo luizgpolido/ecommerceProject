@@ -1,6 +1,7 @@
 package com.luizpolido.ecommerce.dto;
 
 
+import com.luizpolido.ecommerce.entities.Product;
 import lombok.*;
 
 @Data
@@ -14,4 +15,12 @@ public class ProductDTO {
     private String description;
     private Double price;
     private String imgUrl;
+
+    public ProductDTO(Product product){
+        id = product.getId();
+        name = product.getName();
+        description = product.getDescription();
+        price = product.getPrice();
+        imgUrl = product.getImgUrl();
+    }
 }
