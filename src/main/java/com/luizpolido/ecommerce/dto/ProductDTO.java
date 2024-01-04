@@ -7,7 +7,6 @@ import lombok.*;
 @Data
 @Setter(AccessLevel.NONE)
 @AllArgsConstructor
-@NoArgsConstructor
 public class ProductDTO {
 
     private long id;
