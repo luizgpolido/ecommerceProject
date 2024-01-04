@@ -3,14 +3,16 @@ package com.luizpolido.ecommerce.services;
 import com.luizpolido.ecommerce.dto.ProductDTO;
 import com.luizpolido.ecommerce.entities.Product;
 import com.luizpolido.ecommerce.repositories.ProductRepository;
+import com.luizpolido.ecommerce.services.exceptions.DatabaseException;
 import com.luizpolido.ecommerce.services.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class ProductService {
@@ -42,15 +44,29 @@ public class ProductService {
 
     @Transactional
     public ProductDTO update(Long id , ProductDTO dto){
-        Product entity = productRepository.getReferenceById(id);
-        copyDTOtoEntity(dto, entity);
-        entity = productRepository.save(entity);
-        return new ProductDTO(entity);
+        try {
+            Product entity = productRepository.getReferenceById(id);
+            copyDTOtoEntity(dto, entity);
+            entity = productRepository.save(entity);
+            return new ProductDTO(entity);
+        } catch (EntityNotFoundException e){
+            throw new ResourceNotFoundException(e.getMessage());
+        }
+
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.SUPPORTS)
     public void delete(Long id){
-        productRepository.deleteById(id);
+        if (!productRepository.existsById(id)){
+            throw new ResourceNotFoundException("Resource not Found");
+        }
+
+        try {
+            productRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e){
+            throw new DatabaseException("Reference Integrity Fail");
+        }
+
     }
 
     private void copyDTOtoEntity(ProductDTO dto, Product entity){
